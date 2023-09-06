@@ -90,6 +90,46 @@ public class bookAccess {
 
     }
 
+    public static int updateBook(int bookId,String bookName) throws SQLException{
+        int status = 0;
+        String deleteSql = "UPDATE `books` SET title= ? WHERE id = ?";
+
+        Connection connection = DB.Db.getConnection();
+        PreparedStatement statement = connection.prepareStatement(deleteSql);
+
+        // Set the id parameter in the prepared statement
+        statement.setString(1, bookName);
+        statement.setInt(2, bookId);
+
+        // Execute the delete statement
+        int rowsUpdated = statement.executeUpdate();
+
+        if (rowsUpdated > 0) {
+            return  1;
+        } else {
+            return 0;
+        }
+    }
+
+    public static int  fetchBookId(int bookid) {
+        int book_Id = 0;
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/t", "root", "");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM books WHERE id = ?");
+            preparedStatement.setInt(1, bookid);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                book_Id = resultSet.getInt("id");
+            }
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return book_Id;
+    }
+
 
 
 

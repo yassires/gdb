@@ -31,6 +31,9 @@ public class Books {
     public Books(int id) {
         this.id = id;
     }
+    public Books(){
+
+    }
 
     public Books(String bookTitle, int authorId, String bookIsbn, String bookCategory, Date bookReleaseDate, int bookQuantity, int bookQuantity1, int borrow, int lost) {
 

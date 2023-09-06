@@ -146,19 +146,20 @@ public class Main {
         System.out.println("\n");
     }
 
-    public static void updateBook()
-    {
+    public static void updateBook() throws SQLException {
         System.out.println("------------------------------------------------");
-        System.out.println("Enter Book Isbn:");
+        System.out.println("Enter Book ID:");
         System.out.println("------------------------------------------------");
-        String bookIsbn = scanner.nextLine();
+        int bookId = scanner.nextInt();
+        scanner.nextLine();
+        int book_Id = access.bookAccess.fetchBookId(bookId);
         System.out.println("------------------------------------------------");
         System.out.println("Enter New Book Name:");
         System.out.println("------------------------------------------------");
         String bookName = scanner.nextLine();
         System.out.println("------------------------------------------------");
-
-        int status = 1;
+        Books book = new Books(bookId);
+        int status =access.bookAccess.updateBook(bookId,bookName);
         if(status == 1 )
         {
             System.out.println("Book updated successfully");
