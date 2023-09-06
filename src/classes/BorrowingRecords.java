@@ -1,3 +1,7 @@
+package classes;
+
+import classes.Borrower;
+
 import java.util.Date;
 
 public class BorrowingRecords {

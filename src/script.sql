@@ -1,5 +1,7 @@
 CREATE DATABASE gdb;
 
+USE gdb;
+
 CREATE TABLE author (
                         id INT AUTO_INCREMENT PRIMARY KEY,
                         name VARCHAR(255)
@@ -11,6 +13,7 @@ CREATE TABLE books (
                        author_id INT,
                        isbn VARCHAR(13) unique,
                        category VARCHAR(255),
+                       release_date DATE,
                        quantity INT,
                        available INT,
                        borrow INT,
@@ -38,7 +41,7 @@ CREATE TABLE borrowingRecords(
 CREATE TRIGGER tt
     before insert on borrower
     for each row
-    set new.name = UPPER(new name);
+    set new.name = UPPER(new.name);
 
 
 

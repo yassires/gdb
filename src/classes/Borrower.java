@@ -1,3 +1,5 @@
+package classes;
+
 public class Borrower {
 
     private int id;

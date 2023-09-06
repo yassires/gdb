@@ -1,18 +1,22 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import DB.Db;
+import classes.Author;
+import classes.Books;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.List;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.sql.Date;
 import java.util.Scanner;
+import java.text.SimpleDateFormat;
+
 
 public class Main {
 
-        Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = new Scanner(System.in);
 
 
-
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws SQLException, ParseException {
             try {
                 Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gdb","root","");
                 System.out.println(con);
@@ -20,7 +24,6 @@ public class Main {
             catch (Exception e){
 
             }
-        Scanner scanner = new Scanner(System.in);
 
         int option ;
 
@@ -44,7 +47,7 @@ public class Main {
             switch(option)
             {
                 case 1:
-                    staticMethod();
+                    addBook();
                     break;
 
                 case 2:
@@ -52,7 +55,7 @@ public class Main {
                     break;
 
                 case 3:
-
+                    displayBooks();
                     break;
 
                 case 4:
@@ -63,10 +66,10 @@ public class Main {
 
                     break;
                 case 6:
-
+                    deleteBook();
                     break;
                 case 7:
-
+                    updateBook();
                     break;
                 case 8:
 
@@ -83,7 +86,7 @@ public class Main {
             }
         }while(option != 0);
     }
-    public  void viewBooks()
+    public static void displayBooks()
     {
         System.out.println("-----------------------------------------------");
             //books
@@ -94,34 +97,56 @@ public class Main {
     }
 
 
-    public static void staticMethod() {
 
-        // instance of the class
-        Main instance = new Main();
-
-        // Call the non-static method on the instance
-        instance.addBook();
-    }
-    public  void addBook()
-    {
+    public static void addBook() throws ParseException, SQLException {
 
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book ISBN:");
         System.out.println("------------------------------------------------");
         String bookIsbn = scanner.nextLine();
+        scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Author Name:");
+        System.out.println("------------------------------------------------");
+        String authorName = scanner.nextLine();
+        scanner.nextLine();
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book Title:");
         System.out.println("------------------------------------------------");
         String bookTitle = scanner.nextLine();
+        scanner.nextLine();
         System.out.println("------------------------------------------------");
         System.out.println("Enter Category:");
         System.out.println("------------------------------------------------");
         String bookCategory = scanner.nextLine();
+        scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Release Date:");
+        System.out.println("------------------------------------------------");
+        String dateString = scanner.next();
+        scanner.nextLine();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date utilDate = dateFormat.parse(dateString);
+        java.sql.Date bookReleaseDate = new java.sql.Date(utilDate.getTime());
+
         System.out.println("------------------------------------------------");
         System.out.println("Enter Quantity:");
         System.out.println("------------------------------------------------");
         int BookQuantity = Integer.parseInt(scanner.nextLine());
-        int status = 1;
+
+        Author author = new Author();
+
+        int authorId = author.fetchAuthorId(authorName);
+
+        if (authorId != 0) {
+            System.out.println("Author ID: " + authorId);
+        } else {
+            System.out.println("Author not found.");
+        }
+
+
+        Books book = new Books(bookTitle,authorId,bookIsbn,bookCategory,bookReleaseDate,BookQuantity,BookQuantity,0,0);
+        int status = access.bookAccess.addBook(book);
         if(status ==1 )
         {
             System.out.println("Book added successfully");
@@ -133,7 +158,7 @@ public class Main {
         System.out.println("\n");
     }
 
-    public void updateBook()
+    public static void updateBook()
     {
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book Isbn:");
@@ -152,13 +177,13 @@ public class Main {
         }
         else
         {
-            System.out.println("ERROR while updating book");
+            System.out.println("Something went wrong");
         }
         System.out.println("\n");
 
     }
 
-    public  void deleteBook()
+    public  static void deleteBook()
     {
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book Isbn:");
@@ -171,14 +196,10 @@ public class Main {
         }
         else
         {
-            System.out.println("ERROR while deleting book");
+            System.out.println("Something went wrong");
         }
         System.out.println("\n");
     }
-
-
-
-
 
 
 }
