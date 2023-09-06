@@ -1,12 +1,11 @@
-import DB.Db;
 import classes.Author;
 import classes.Books;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.sql.Date;
 import java.util.Scanner;
 import java.text.SimpleDateFormat;
 
@@ -17,13 +16,6 @@ public class Main {
 
 
     public static void main(String[] args) throws SQLException, ParseException {
-            try {
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/gdb","root","");
-                System.out.println(con);
-            }
-            catch (Exception e){
-
-            }
 
         int option ;
 
@@ -103,37 +95,12 @@ public class Main {
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book ISBN:");
         System.out.println("------------------------------------------------");
-        String bookIsbn = scanner.nextLine();
+        String bookIsbn = scanner.next();
         scanner.nextLine();
         System.out.println("------------------------------------------------");
         System.out.println("Enter Author Name:");
         System.out.println("------------------------------------------------");
         String authorName = scanner.nextLine();
-        scanner.nextLine();
-        System.out.println("------------------------------------------------");
-        System.out.println("Enter Book Title:");
-        System.out.println("------------------------------------------------");
-        String bookTitle = scanner.nextLine();
-        scanner.nextLine();
-        System.out.println("------------------------------------------------");
-        System.out.println("Enter Category:");
-        System.out.println("------------------------------------------------");
-        String bookCategory = scanner.nextLine();
-        scanner.nextLine();
-        System.out.println("------------------------------------------------");
-        System.out.println("Enter Release Date:");
-        System.out.println("------------------------------------------------");
-        String dateString = scanner.next();
-        scanner.nextLine();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        java.util.Date utilDate = dateFormat.parse(dateString);
-        java.sql.Date bookReleaseDate = new java.sql.Date(utilDate.getTime());
-
-        System.out.println("------------------------------------------------");
-        System.out.println("Enter Quantity:");
-        System.out.println("------------------------------------------------");
-        int BookQuantity = Integer.parseInt(scanner.nextLine());
-
         Author author = new Author();
 
         int authorId = author.fetchAuthorId(authorName);
@@ -143,10 +110,31 @@ public class Main {
         } else {
             System.out.println("Author not found.");
         }
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Book Title:");
+        System.out.println("------------------------------------------------");
+        String bookTitle = scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Category:");
+        System.out.println("------------------------------------------------");
+        String bookCategory = scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Release Date [yyyy-mm-dd]:");
+        System.out.println("------------------------------------------------");
+        String dateString = scanner.next();
+        // yyyy-mm-dd
+        Date bookReleaseDate = Date.valueOf(dateString);
+
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Quantity:");
+        System.out.println("------------------------------------------------");
+        int BookQuantity = Integer.valueOf(scanner.nextInt());
+
+
 
 
         Books book = new Books(bookTitle,authorId,bookIsbn,bookCategory,bookReleaseDate,BookQuantity,BookQuantity,0,0);
-        int status = access.bookAccess.addBook(book);
+        int status = access.bookAccess.addBook(book,authorId);
         if(status ==1 )
         {
             System.out.println("Book added successfully");
@@ -171,7 +159,7 @@ public class Main {
         System.out.println("------------------------------------------------");
 
         int status = 1;
-        if(status ==1 )
+        if(status == 1 )
         {
             System.out.println("Book updated successfully");
         }
@@ -183,13 +171,13 @@ public class Main {
 
     }
 
-    public  static void deleteBook()
-    {
+    public  static void deleteBook() throws SQLException {
         System.out.println("------------------------------------------------");
-        System.out.println("Enter Book Isbn:");
+        System.out.println("Enter Book Id:");
         System.out.println("------------------------------------------------");
-        String bookIsbn = scanner.nextLine();
-        int status = 1;
+        int bookId = scanner.nextInt();
+        Books book = new Books(bookId);
+        int status =access.bookAccess.deleteBook(bookId);
         if(status == 1 )
         {
             System.out.println("Book deleted successfully");

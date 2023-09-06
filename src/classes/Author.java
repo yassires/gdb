@@ -31,8 +31,7 @@ public class Author {
         int authorId = 0;
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/t", "root", "");
-
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM author WHERE name = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM author WHERE LOWER(name) = LOWER(?)");
             preparedStatement.setString(1, authorName);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

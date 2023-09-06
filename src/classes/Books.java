@@ -28,21 +28,22 @@ public class Books {
         this.borrow = borrow;
         this.lost = lost;
     };
-    public Books(int id, String title, Author author, String isbn, String category,Date release_date, int quantity, int available,int borrow, int lost) {
+    public Books(int id) {
         this.id = id;
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-        this.category = category;
-        this.release_date = release_date;
-        this.quantity = quantity;
-        this.available = available;
-        this.borrow = borrow;
-        this.lost = lost;
     }
 
     public Books(String bookTitle, int authorId, String bookIsbn, String bookCategory, Date bookReleaseDate, int bookQuantity, int bookQuantity1, int borrow, int lost) {
 
+
+        this.title = bookTitle;
+        this.author = new Author();
+        this.isbn = bookIsbn;
+        this.category = bookCategory;
+        this.release_date = bookReleaseDate;
+        this.quantity = bookQuantity;
+        this.available = bookQuantity1;
+        this.borrow = borrow;
+        this.lost = lost;
     }
 
     public int getId() {
@@ -51,6 +52,10 @@ public class Books {
 
     public String getTitle() {
         return title;
+    }
+
+    public Author getAuthor() {
+        return author;
     }
 
     public void setAuthor(Author author) {
@@ -77,6 +82,23 @@ public class Books {
     public int getAvailable(){
         return available;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setRelease_date(Date release_date) {
+        this.release_date = release_date;
+    }
+
     public int getBorrow(){
         return borrow;
     }
