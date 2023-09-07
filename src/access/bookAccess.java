@@ -32,8 +32,7 @@ public class bookAccess {
     }
 
     public static List<Books> displayBooks() throws SQLException {
-
-        List<Books> bookList =new ArrayList<Books>();
+        
         String sql = "SELECT b.*, a.name AS author_name " +
                 "FROM books b " +
                 "JOIN author a ON b.author_id = a.id";
@@ -62,7 +61,7 @@ public class bookAccess {
                 System.out.println("Book Title: " + title);
                 System.out.println("ISBN: " + isbn);
                 System.out.println("category: " + category);
-                System.out.println("Author Name: " + author_name);
+                System.out.println("Author Name: " + release_date);
                 System.out.println("ISBN: " + isbn);
                 System.out.println("ISBN: " + isbn);
                 System.out.println("ISBN: " + isbn);
