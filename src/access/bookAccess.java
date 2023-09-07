@@ -31,14 +31,18 @@ public class bookAccess {
         return status;
     }
 
-    public List<Books> displayBooks() throws SQLException {
+    public static List<Books> displayBooks() throws SQLException {
 
         List<Books> bookList =new ArrayList<Books>();
+        String sql = "SELECT b.*, a.name AS author_name " +
+                "FROM books b " +
+                "JOIN author a ON b.author_id = a.id";
 
         try {
             Connection conn = DB.Db.getConnection();
             Statement st = conn.createStatement();
-            ResultSet s = st.executeQuery("SELECT * FROM books");
+
+            ResultSet s = st.executeQuery(sql);
 
             while(s.next()){
 
@@ -51,14 +55,18 @@ public class bookAccess {
                 int available = s.getInt("available");
                 int borrow = s.getInt("borrow");
                 int lost = s.getInt("lost");
-
                 int author_id = s.getInt("author_id");
                 String author_name = s.getString("author_name");
 
-                Author author = new Author();
-
-                Books book =new Books(title,author,isbn,category,release_date,quantity,available,borrow,lost);
-                bookList.add(book);
+                System.out.println("Book ID: " + id);
+                System.out.println("Book Title: " + title);
+                System.out.println("ISBN: " + isbn);
+                System.out.println("category: " + category);
+                System.out.println("Author Name: " + author_name);
+                System.out.println("ISBN: " + isbn);
+                System.out.println("ISBN: " + isbn);
+                System.out.println("ISBN: " + isbn);
+                System.out.println("---------------");
 
             }
 
@@ -111,9 +119,9 @@ public class bookAccess {
         }
     }
 
-    public static int  fetchBookId(int bookid) {
+    public static int  fetchBookId(int bookid) throws SQLException {
         int book_Id = 0;
-        try {
+
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/t", "root", "");
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM books WHERE id = ?");
             preparedStatement.setInt(1, bookid);
@@ -124,9 +132,7 @@ public class bookAccess {
             resultSet.close();
             preparedStatement.close();
             connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
         return book_Id;
     }
 

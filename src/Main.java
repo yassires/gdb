@@ -78,11 +78,10 @@ public class Main {
             }
         }while(option != 0);
     }
-    public static void displayBooks()
-    {
+    public static void displayBooks() throws SQLException {
         System.out.println("-----------------------------------------------");
             //books
-
+           access.bookAccess.displayBooks();
         System.out.println("-----------------------------------------------");
         System.out.println("\n");
 

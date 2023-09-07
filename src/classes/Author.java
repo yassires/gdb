@@ -27,9 +27,9 @@ public class Author {
         System.out.println("Autour created successfully");
     }
 
-    public  int fetchAuthorId(String authorName) {
+    public  int fetchAuthorId(String authorName) throws SQLException {
         int authorId = 0;
-        try {
+
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/t", "root", "");
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM author WHERE LOWER(name) = LOWER(?)");
             preparedStatement.setString(1, authorName);
@@ -40,9 +40,7 @@ public class Author {
             resultSet.close();
             preparedStatement.close();
             connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
         return authorId;
     }
 
