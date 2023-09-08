@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class BorrowingRecords {
     private int id;
-    private String uid;
+    private String br_id;
 
     private Date borrowingDate;
     private Date returnborrowingDate;
@@ -14,10 +14,10 @@ public class BorrowingRecords {
     private Books book;
     private Borrower borrower;
 
-    public BorrowingRecords(int id, String bookIsbn, String uid, Date borrowingDate, Date returnborrowingDate, Books book, Borrower borrower) {
+    public BorrowingRecords(int id, String bookIsbn, String br_id, Date borrowingDate, Date returnborrowingDate, Books book, Borrower borrower) {
         this.id = id;
         this.book = book;
-        this.uid = uid;
+        this.br_id = br_id;
         this.borrowingDate = borrowingDate;
         this.returnborrowingDate = returnborrowingDate;
         this.borrower = borrower;
@@ -35,7 +35,7 @@ public class BorrowingRecords {
     }
 
     public String getUid() {
-        return uid;
+        return br_id;
     }
 
     public Date getBorrowingDate() {

@@ -12,17 +12,17 @@ public class authorAccess {
         int authorId = 0;
 
         Connection connection = Db.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM author WHERE LOWER(name) = LOWER(?)");
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM authors WHERE LOWER(name) = LOWER(?)");
         preparedStatement.setString(1, authorName);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             authorId = resultSet.getInt("id");
         }
         else {
-            PreparedStatement s = connection.prepareStatement("INSERT INTO `author`(`name`) VALUES (?)");
+            PreparedStatement s = connection.prepareStatement("INSERT INTO `authors`(`name`) VALUES (?)");
             s.setString(1,authorName);
             s.executeUpdate();
-            preparedStatement = connection.prepareStatement("SELECT id FROM author WHERE LOWER(name) = LOWER(?)");
+            preparedStatement = connection.prepareStatement("SELECT id FROM authors WHERE LOWER(name) = LOWER(?)");
             preparedStatement.setString(1, authorName);
             resultSet = preparedStatement.executeQuery();
             authorId = resultSet.getInt("id");

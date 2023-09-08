@@ -34,7 +34,7 @@ public class bookAccess {
 
     public static void displayBooks() throws SQLException {
 
-        String sql = "SELECT b.*, a.name AS author_name " + "FROM books b " + "JOIN author a ON b.author_id = a.id";
+        String sql = "SELECT b.*, a.name AS author_name " + "FROM books b " + "JOIN authors a ON b.author_id = a.id";
 
             Connection conn = Db.getConnection();
             Statement st = conn.createStatement();
@@ -139,7 +139,7 @@ public class bookAccess {
         try {
 
 
-            String searchSql = "SELECT b.*, a.name " + "FROM books b " + "JOIN author a ON b.author_id = a.id " + "WHERE LOWER(b.title) LIKE  LOWER(?) OR LOWER(a.name) LIKE LOWER(?)";
+            String searchSql = "SELECT b.*, a.name " + "FROM books b " + "JOIN authors a ON b.author_id = a.id " + "WHERE LOWER(b.title) LIKE  LOWER(?) OR LOWER(a.name) LIKE LOWER(?)";
             Connection connection = Db.getConnection();
             PreparedStatement statement = connection.prepareStatement(searchSql);
 

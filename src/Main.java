@@ -50,7 +50,7 @@ public class Main {
                     break;
 
                 case 4:
-
+                    borrowBook();
                     break;
 
                 case 5:
@@ -118,7 +118,6 @@ public class Main {
         System.out.println("Enter Release Date [yyyy-mm-dd]:");
         System.out.println("------------------------------------------------");
         String dateString = scanner.next();
-        // yyyy-mm-dd
         Date bookReleaseDate = Date.valueOf(dateString);
 
         System.out.println("------------------------------------------------");
@@ -137,7 +136,7 @@ public class Main {
         }
         else
         {
-            System.out.println("ERROR while adding book");
+            System.out.println("something went wrong");
         }
         System.out.println("\n");
     }
@@ -184,7 +183,6 @@ public class Main {
 
 
     public static void searchBooks() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("--------------------Search Book-----------------------");
         System.out.println("------------------------------------------------");
         System.out.println("Search for books by title or author: ");
@@ -193,6 +191,47 @@ public class Main {
         access.bookAccess.searchBooks(srch);
         System.out.println("Press Enter to return to the main menu...");
         scanner.nextLine();
+
+    }
+
+    public static void borrowBook() throws SQLException {
+        System.out.println("--------------------Borrow a Book-----------------------");
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Book Isbn: ");
+        System.out.println("------------------------------------------------");
+        String ibn = scanner.nextLine();
+        scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Your name:");
+        System.out.println("------------------------------------------------");
+        String borrowerName = scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Your CIN:");
+        System.out.println("------------------------------------------------");
+        String borrowerCin = scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Your Mail:");
+        System.out.println("------------------------------------------------");
+        String borrowerMail = scanner.nextLine();
+        int borrowerId = access.borrowerAccess.checkBorrower(borrowerName);
+
+
+        if (borrowerId != 0){
+            System.out.println("Borrower ID: " + borrowerId);
+        }else {
+            access.borrowerAccess.createBorrower(borrowerName,borrowerCin,borrowerMail);
+            borrowerId = access.borrowerAccess.checkBorrower(borrowerName);
+        }
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter pick up date:");
+        System.out.println("------------------------------------------------");
+        String dateString = scanner.next();
+        Date borrowDate = Date.valueOf(dateString);
+        System.out.println("------------------------------------------------");
+        System.out.println("Enter Return date:");
+        System.out.println("------------------------------------------------");
+        String dateStringR = scanner.nextLine();
+        Date borrowReturn = Date.valueOf(dateStringR);
 
     }
 }
