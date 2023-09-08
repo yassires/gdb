@@ -97,19 +97,14 @@ public class Main {
         System.out.println("Enter Author Name:");
         System.out.println("------------------------------------------------");
         String authorName = scanner.nextLine();
+        Author author = new Author();
 
         int authorId = access.authorAccess.fetchAuthorId(authorName);
 
         if (authorId != 0) {
             System.out.println("Author ID: " + authorId);
         } else {
-            Author author = new Author(authorName);
-            int s = access.authorAccess.CreateAuthor(authorName);
-            if (s != 0){
-                System.out.println("Autour created successfully");
-            }else {
                 System.out.println("Something went wrong");
-            }
         }
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book Title:");

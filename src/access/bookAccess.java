@@ -1,5 +1,6 @@
 package access;
 
+import DB.Db;
 import classes.Author;
 import classes.Books;
 
@@ -13,7 +14,7 @@ public class bookAccess {
     public static int addBook(Books book, int author_id) throws SQLException {
 
         int status = 0;
-            Connection conn = DB.Db.getConnection();
+            Connection conn = Db.getConnection();
             PreparedStatement s = conn.prepareStatement("INSERT INTO `books`( `title`, `author_id`, `isbn`, `category`, `release_date`, `quantity`, `available`, `borrow`, `lost`) VALUES (?,?,?,?,?,?,?,?,?)");
 
             s.setString(1, book.getTitle());
@@ -35,7 +36,7 @@ public class bookAccess {
 
         String sql = "SELECT b.*, a.name AS author_name " + "FROM books b " + "JOIN author a ON b.author_id = a.id";
 
-            Connection conn = DB.Db.getConnection();
+            Connection conn = Db.getConnection();
             Statement st = conn.createStatement();
 
             ResultSet s = st.executeQuery(sql);
@@ -74,7 +75,7 @@ public class bookAccess {
     public static void deleteBook(int id) {
         try {
             String deleteSql = "DELETE FROM books WHERE id = ?";
-            Connection connection = DB.Db.getConnection();
+            Connection connection = Db.getConnection();
             PreparedStatement statement = connection.prepareStatement(deleteSql);
 
             // Set the id parameter in the prepared statement
@@ -99,7 +100,7 @@ public class bookAccess {
         int status = 0;
         String deleteSql = "UPDATE `books` SET title= ? WHERE id = ?";
 
-        Connection connection = DB.Db.getConnection();
+        Connection connection = Db.getConnection();
         PreparedStatement statement = connection.prepareStatement(deleteSql);
 
         // Set the id parameter in the prepared statement
@@ -119,7 +120,7 @@ public class bookAccess {
     public static int  fetchBookId(int bookid) throws SQLException {
         int book_Id = 0;
 
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/t", "root", "");
+            Connection connection = Db.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM books WHERE id = ?");
             preparedStatement.setInt(1, bookid);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -139,7 +140,7 @@ public class bookAccess {
 
 
             String searchSql = "SELECT b.*, a.name " + "FROM books b " + "JOIN author a ON b.author_id = a.id " + "WHERE LOWER(b.title) LIKE  LOWER(?) OR LOWER(a.name) LIKE LOWER(?)";
-            Connection connection = DB.Db.getConnection();
+            Connection connection = Db.getConnection();
             PreparedStatement statement = connection.prepareStatement(searchSql);
 
             // Set parameters for title and author name search
