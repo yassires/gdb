@@ -1,13 +1,12 @@
 import classes.Author;
 import classes.Books;
 
-import java.sql.Connection;
+
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.text.SimpleDateFormat;
 
 
 public class Main {
@@ -43,7 +42,7 @@ public class Main {
                     break;
 
                 case 2:
-
+                    searchBooks();
                     break;
 
                 case 3:
@@ -64,9 +63,7 @@ public class Main {
                     updateBook();
                     break;
                 case 8:
-
                     break;
-
                 case 0:
                     System.out.println("******************************THANK YOU******************************");
                     System.exit(0);
@@ -79,7 +76,7 @@ public class Main {
         }while(option != 0);
     }
     public static void displayBooks() throws SQLException {
-        System.out.println("-----------------------------------------------");
+        System.out.println("-----------------------ALL BOOKS------------------------");
             //books
            access.bookAccess.displayBooks();
         System.out.println("-----------------------------------------------");
@@ -100,14 +97,19 @@ public class Main {
         System.out.println("Enter Author Name:");
         System.out.println("------------------------------------------------");
         String authorName = scanner.nextLine();
-        Author author = new Author();
 
-        int authorId = author.fetchAuthorId(authorName);
+        int authorId = access.authorAccess.fetchAuthorId(authorName);
 
         if (authorId != 0) {
             System.out.println("Author ID: " + authorId);
         } else {
-            System.out.println("Author not found.");
+            Author author = new Author(authorName);
+            int s = access.authorAccess.CreateAuthor(authorName);
+            if (s != 0){
+                System.out.println("Autour created successfully");
+            }else {
+                System.out.println("Something went wrong");
+            }
         }
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book Title:");
@@ -171,23 +173,31 @@ public class Main {
 
     }
 
-    public  static void deleteBook() throws SQLException {
-        System.out.println("------------------------------------------------");
-        System.out.println("Enter Book Id:");
-        System.out.println("------------------------------------------------");
-        int bookId = scanner.nextInt();
-        Books book = new Books(bookId);
-        int status =access.bookAccess.deleteBook(bookId);
-        if(status == 1 )
-        {
-            System.out.println("Book deleted successfully");
-        }
-        else
-        {
-            System.out.println("Something went wrong");
+    public static void deleteBook() {
+        try {
+            System.out.println("------------------------------------------------");
+            System.out.println("Enter Book Id:");
+            System.out.println("------------------------------------------------");
+            int bookId = scanner.nextInt();
+            access.bookAccess.deleteBook(bookId);
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a valid integer for Book Id.");
+            scanner.nextLine(); // Clear the invalid input from the scanner
         }
         System.out.println("\n");
     }
 
 
+    public static void searchBooks() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("--------------------Search Book-----------------------");
+        System.out.println("------------------------------------------------");
+        System.out.println("Search for books by title or author: ");
+        System.out.println("------------------------------------------------");
+        String srch = scanner.nextLine();
+        access.bookAccess.searchBooks(srch);
+        System.out.println("Press Enter to return to the main menu...");
+        scanner.nextLine();
+
+    }
 }

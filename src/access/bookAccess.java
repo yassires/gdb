@@ -31,13 +31,10 @@ public class bookAccess {
         return status;
     }
 
-    public static List<Books> displayBooks() throws SQLException {
-        
-        String sql = "SELECT b.*, a.name AS author_name " +
-                "FROM books b " +
-                "JOIN author a ON b.author_id = a.id";
+    public static void displayBooks() throws SQLException {
 
-        try {
+        String sql = "SELECT b.*, a.name AS author_name " + "FROM books b " + "JOIN author a ON b.author_id = a.id";
+
             Connection conn = DB.Db.getConnection();
             Statement st = conn.createStatement();
 
@@ -60,28 +57,25 @@ public class bookAccess {
                 System.out.println("Book ID: " + id);
                 System.out.println("Book Title: " + title);
                 System.out.println("ISBN: " + isbn);
-                System.out.println("category: " + category);
-                System.out.println("Author Name: " + release_date);
-                System.out.println("ISBN: " + isbn);
-                System.out.println("ISBN: " + isbn);
-                System.out.println("ISBN: " + isbn);
+                System.out.println("Category: " + category);
+                System.out.println("Author: " + author_name);
+                System.out.println("Release Date: " + release_date);
+                System.out.println("Available: " + available);
+                System.out.println("Borrow: " + borrow);
+                System.out.println("Lost: " + lost);
                 System.out.println("---------------");
 
             }
 
-        } catch (SQLException e){
 
-            e.printStackTrace();
-        }
-        return bookList;
+
     }
 
-    public static int deleteBook(int id) throws SQLException {
-        int status = 0;
-        String deleteSql = "DELETE FROM books WHERE id = ?";
-
-             Connection connection = DB.Db.getConnection();
-             PreparedStatement statement = connection.prepareStatement(deleteSql);
+    public static void deleteBook(int id) {
+        try {
+            String deleteSql = "DELETE FROM books WHERE id = ?";
+            Connection connection = DB.Db.getConnection();
+            PreparedStatement statement = connection.prepareStatement(deleteSql);
 
             // Set the id parameter in the prepared statement
             statement.setInt(1, id);
@@ -89,13 +83,17 @@ public class bookAccess {
             // Execute the delete statement
             int rowsDeleted = statement.executeUpdate();
 
+            // Handle the result or error here if needed
             if (rowsDeleted > 0) {
-                return  1;
+                System.out.println("Book deleted successfully");
             } else {
-                return 0;
+                System.out.println("Book with ID " + id + " not found.");
             }
-
+        } catch (SQLException e) {
+            System.out.println("Error deleting book: " + e.getMessage());
+        }
     }
+
 
     public static int updateBook(int bookId,String bookName) throws SQLException{
         int status = 0;
@@ -134,6 +132,49 @@ public class bookAccess {
 
         return book_Id;
     }
+
+
+    public static void searchBooks(String srch) {
+        try {
+
+
+            String searchSql = "SELECT b.*, a.name " + "FROM books b " + "JOIN author a ON b.author_id = a.id " + "WHERE LOWER(b.title) LIKE  LOWER(?) OR LOWER(a.name) LIKE LOWER(?)";
+            Connection connection = DB.Db.getConnection();
+            PreparedStatement statement = connection.prepareStatement(searchSql);
+
+            // Set parameters for title and author name search
+            String searchParam = "%" + srch + "%";
+            statement.setString(1, searchParam);
+            statement.setString(2, searchParam);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("No matching books found.");
+            } else {
+                System.out.println("Matching Books:");
+                while (resultSet.next()) {
+
+                    int bookId = resultSet.getInt("id");
+                    String title = resultSet.getString("title");
+                    String authorName = resultSet.getString("name");
+                    System.out.println("Book ID: " + bookId);
+                    System.out.println("Title: " + title);
+                    System.out.println("Author: " + authorName);
+                    System.out.println("---------------");
+                }
+            }
+
+            resultSet.close();
+            statement.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            System.out.println("Something went wrong"+ e.getMessage());
+        }
+    }
+
+
 
 
 
