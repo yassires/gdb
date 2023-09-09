@@ -1,7 +1,9 @@
 import classes.Author;
 import classes.Books;
+import classes.BorrowingRecords;
 
 
+import java.awt.*;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -54,7 +56,7 @@ public class Main {
                     break;
 
                 case 5:
-
+                    returnBook();
                     break;
                 case 6:
                     deleteBook();
@@ -199,7 +201,7 @@ public class Main {
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book Isbn: ");
         System.out.println("------------------------------------------------");
-        String ibn = scanner.nextLine();
+        String ibn = scanner.next();
         scanner.nextLine();
         System.out.println("------------------------------------------------");
         System.out.println("Enter Your name:");
@@ -220,18 +222,44 @@ public class Main {
             System.out.println("Borrower ID: " + borrowerId);
         }else {
             access.borrowerAccess.createBorrower(borrowerName,borrowerCin,borrowerMail);
+
             borrowerId = access.borrowerAccess.checkBorrower(borrowerName);
+
         }
         System.out.println("------------------------------------------------");
         System.out.println("Enter pick up date:");
         System.out.println("------------------------------------------------");
         String dateString = scanner.next();
         Date borrowDate = Date.valueOf(dateString);
+        scanner.nextLine();
         System.out.println("------------------------------------------------");
         System.out.println("Enter Return date:");
         System.out.println("------------------------------------------------");
         String dateStringR = scanner.nextLine();
         Date borrowReturn = Date.valueOf(dateStringR);
 
+
+        BorrowingRecords borrowingRecords = new BorrowingRecords(ibn,borrowerId,borrowDate,borrowReturn);
+        String returnResult = access.borrowRdAccess.borrowBook(borrowingRecords,borrowerId);
+
+        System.out.println(returnResult);
+        System.out.println("\n");
+
+    }
+
+    public static void returnBook(){
+        System.out.println("------------------------------------------------");
+        System.out.print("Enter Your ID: ");
+        System.out.println("------------------------------------------------");
+        int borrower_Id = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("------------------------------------------------");
+        System.out.print("Enter the ISBN of the book: ");
+        String isbn = scanner.nextLine();
+        System.out.println("------------------------------------------------");
+
+        String returnResult = access.borrowRdAccess.returnBook(borrower_Id,isbn);
+
+        System.out.println(returnResult);
     }
 }

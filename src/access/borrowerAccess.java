@@ -7,21 +7,19 @@ public class borrowerAccess {
 
 public static int checkBorrower(String borrowerName) throws SQLException {
         int borrower_id = 0;
-        String searchSql = "SELECT * FROM borrowers WHERE name = ?";
-        Connection connection = DB.Db.getConnection();
-        PreparedStatement statement = connection.prepareStatement(searchSql);
-
-        // Set parameters for the user's input
-        statement.setString(1, borrowerName);
-
-        ResultSet resultSet = statement.executeQuery();
+    Connection connection = Db.getConnection();
+    PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM borrowers WHERE LOWER(name) = LOWER(?)");
+    preparedStatement.setString(1, borrowerName);
+    ResultSet resultSet = preparedStatement.executeQuery();
+    if (resultSet.next()) {
         borrower_id = resultSet.getInt("id");
-
-    // Check if the result set contains any rows
-        boolean borrowerExists = resultSet.isBeforeFirst();
+    }
+    else {
+        borrower_id = 0;
+    }
 
         resultSet.close();
-        statement.close();
+        preparedStatement.close();
         connection.close();
 
         return borrower_id;
@@ -29,7 +27,7 @@ public static int checkBorrower(String borrowerName) throws SQLException {
 
 }
 
-    public static void createBorrower(String borrowerName,String borrowerCin,String borrowerMail) throws SQLException {
+    public static String createBorrower(String borrowerName,String borrowerCin,String borrowerMail) throws SQLException {
 
         try {
             String insertSql = "INSERT INTO borrowers (name,email,cin) VALUES (?,?,?)";
@@ -38,22 +36,18 @@ public static int checkBorrower(String borrowerName) throws SQLException {
 
             statement.setString(1, borrowerName);
             statement.setString(2, borrowerMail);
-            statement.setString(2, borrowerCin);
+            statement.setString(3, borrowerCin);
 
-            // Execute the INSERT statement to create the new borrower
-            int rowsInserted = statement.executeUpdate();
+            statement.executeUpdate();
 
 
-            System.out.println("Borrower created successfully.");
-            statement.close();
-            connection.close();
+            String msg ="Borrower created successfully.";
+            return msg;
 
         } catch (SQLException e) {
-            System.out.println("Failed to create borrower.");
-            ;
+            String msg = "Failed to create borrower.";
+            return msg;
         }
-
-
 
     }
 }

@@ -78,13 +78,10 @@ public class bookAccess {
             Connection connection = Db.getConnection();
             PreparedStatement statement = connection.prepareStatement(deleteSql);
 
-            // Set the id parameter in the prepared statement
             statement.setInt(1, id);
 
-            // Execute the delete statement
             int rowsDeleted = statement.executeUpdate();
 
-            // Handle the result or error here if needed
             if (rowsDeleted > 0) {
                 System.out.println("Book deleted successfully");
             } else {
@@ -103,11 +100,9 @@ public class bookAccess {
         Connection connection = Db.getConnection();
         PreparedStatement statement = connection.prepareStatement(deleteSql);
 
-        // Set the id parameter in the prepared statement
         statement.setString(1, bookName);
         statement.setInt(2, bookId);
 
-        // Execute the delete statement
         int rowsUpdated = statement.executeUpdate();
 
         if (rowsUpdated > 0) {
@@ -143,7 +138,6 @@ public class bookAccess {
             Connection connection = Db.getConnection();
             PreparedStatement statement = connection.prepareStatement(searchSql);
 
-            // Set parameters for title and author name search
             String searchParam = "%" + srch + "%";
             statement.setString(1, searchParam);
             statement.setString(2, searchParam);

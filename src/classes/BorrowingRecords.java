@@ -1,12 +1,11 @@
 package classes;
 
-import classes.Borrower;
-
-import java.util.Date;
+import java.sql.Date;
 
 public class BorrowingRecords {
     private int id;
-    private String br_id;
+    private String isbn;
+    private int br_id;
 
     private Date borrowingDate;
     private Date returnborrowingDate;
@@ -14,35 +13,36 @@ public class BorrowingRecords {
     private Books book;
     private Borrower borrower;
 
-    public BorrowingRecords(int id, String bookIsbn, String br_id, Date borrowingDate, Date returnborrowingDate, Books book, Borrower borrower) {
-        this.id = id;
-        this.book = book;
+    public BorrowingRecords(String isbn, int br_id, Date borrowingDate, Date returnborrowingDate) {
+        this.isbn = isbn;
         this.br_id = br_id;
         this.borrowingDate = borrowingDate;
         this.returnborrowingDate = returnborrowingDate;
-        this.borrower = borrower;
+
     }
 
     public int getId() {
         return id;
     }
 
-    public Books getBookIsbn() {
-        return book;
+    public String getBookIsbn() {
+
+        return isbn;
     }
     public Borrower getBorrower() {
         return borrower;
     }
 
-    public String getUid() {
+    public int getborrowerId() {
         return br_id;
     }
 
-    public Date getBorrowingDate() {
+
+    public java.sql.Date getBorrowingDate() {
         return borrowingDate;
     }
 
-    public Date getReturnborrowingDate() {
-        return returnborrowingDate;
+    public java.sql.Date getReturnborrowingDate() {
+        return  returnborrowingDate;
     }
 }
