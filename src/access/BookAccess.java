@@ -1,18 +1,16 @@
 package access;
 
 import DB.Db;
-import classes.Author;
-import classes.Books;
+import classes.Book;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
-public class bookAccess {
+public class BookAccess {
 
 
-    public static int addBook(Books book, int author_id) throws SQLException {
-
+    public static int addBook(Book book, int author_id) throws SQLException {
+        System.out.println(book.getIsbn());
+        System.exit(0);
         int status = 0;
             Connection conn = Db.getConnection();
             PreparedStatement s = conn.prepareStatement("INSERT INTO `books`( `title`, `author_id`, `isbn`, `category`, `release_date`, `quantity`, `available`, `borrow`, `lost`) VALUES (?,?,?,?,?,?,?,?,?)");
@@ -94,30 +92,72 @@ public class bookAccess {
 
 
     public static int updateBook(int bookId,String bookName) throws SQLException{
-        int status = 0;
-        String deleteSql = "UPDATE `books` SET title= ? WHERE id = ?";
+        String updateSql = "UPDATE `books` SET title= ? WHERE id = ?";
 
         Connection connection = Db.getConnection();
-        PreparedStatement statement = connection.prepareStatement(deleteSql);
+        PreparedStatement statement = connection.prepareStatement(updateSql);
 
         statement.setString(1, bookName);
         statement.setInt(2, bookId);
 
         int rowsUpdated = statement.executeUpdate();
+        System.out.println(bookName);
 
         if (rowsUpdated > 0) {
-            return  1;
-        } else {
+            return 1;
+        }else {
             return 0;
         }
+
     }
 
-    public static int  fetchBookId(int bookid) throws SQLException {
+    public static int updateBook(int bookId, Book book, int option) throws SQLException {
+        int status = 0;
+        String deleteSql = "";
+
+
+        if (option == 2) {
+            deleteSql = "UPDATE `books` SET author_id = ? WHERE id = ?";
+        } else {
+            deleteSql = "UPDATE `books` SET quantity = ? , available = (?) - borrow - lost WHERE id = ?";
+        }
+
+
+    //try()   try with resource
+        try(
+                Connection connection =Db.getConnection();
+                PreparedStatement statement = connection.prepareStatement(deleteSql);) {
+
+
+            if (option == 2) {
+                statement.setInt(1, book.getAuthor().getId());
+                System.out.println(book.getAuthor().getId());
+                statement.setInt(2, bookId);
+            }else {
+                statement.setInt(1, book.getQuantity());
+                statement.setInt(2, book.getQuantity());
+                statement.setInt(3, bookId);
+            }
+
+            int rowsUpdated = statement.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                return status = 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return status;
+    }
+
+
+    public static int  fetchBookIsbn(String bookisbn) throws SQLException {
         int book_Id = 0;
 
             Connection connection = Db.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM books WHERE id = ?");
-            preparedStatement.setInt(1, bookid);
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT id FROM books WHERE isbn = ?");
+            preparedStatement.setString(1, bookisbn);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 book_Id = resultSet.getInt("id");
@@ -132,7 +172,6 @@ public class bookAccess {
 
     public static void searchBooks(String srch) {
         try {
-
 
             String searchSql = "SELECT b.*, a.name " + "FROM books b " + "JOIN authors a ON b.author_id = a.id " + "WHERE LOWER(b.title) LIKE  LOWER(?) OR LOWER(a.name) LIKE LOWER(?)";
             Connection connection = Db.getConnection();
@@ -170,8 +209,95 @@ public class bookAccess {
     }
 
 
+    public static int getTotalBooks() {
+        int totalBooks = 0;
+        try (Connection connection = Db.getConnection();
+             Statement statement = connection.createStatement()) {
 
+            String sqlQuery = "SELECT COUNT(*) AS total_books FROM books";
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
 
+            if (resultSet.next()) {
+                totalBooks = resultSet.getInt("total_books");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalBooks;
+    }
+
+    public static int getAvailableBooks() {
+        int availableBooks = 0;
+        try (Connection connection = Db.getConnection();
+             Statement statement = connection.createStatement()) {
+
+            String sqlQuery = "SELECT SUM(available) AS available_books FROM books";
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            if (resultSet.next()) {
+                availableBooks = resultSet.getInt("available_books");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return availableBooks;
+    }
+
+    public static int getReservedBooks() {
+        int borrowedBooks = 0;
+        try (Connection connection = Db.getConnection();
+             Statement statement = connection.createStatement()) {
+
+            String sqlQuery = "SELECT SUM(borrow) AS borrowed_books FROM books";
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            if (resultSet.next()) {
+                borrowedBooks = resultSet.getInt("borrowed_books");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return borrowedBooks;
+    }
+
+    public static int getLostBooks() {
+        int lostBooks = 0;
+        try (Connection connection = Db.getConnection();
+             Statement statement = connection.createStatement()) {
+
+            String sqlQuery = "SELECT SUM(lost) AS lost_books FROM books";
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            if (resultSet.next()) {
+                lostBooks = resultSet.getInt("lost_books");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lostBooks;
+    }
+
+    public static int getTotalUsers() {
+        int totalBorrowers = 0;
+        try (Connection connection = Db.getConnection();
+             Statement statement = connection.createStatement()) {
+
+            String sqlQuery = "SELECT COUNT(*) AS total_borrowers FROM borrowers";
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            if (resultSet.next()) {
+                totalBorrowers = resultSet.getInt("total_borrowers");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalBorrowers;
+    }
 
 
 }

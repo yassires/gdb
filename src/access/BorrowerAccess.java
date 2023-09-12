@@ -3,7 +3,7 @@ import DB.Db;
 
 import java.sql.*;
 
-public class borrowerAccess {
+public class BorrowerAccess {
 
 public static int checkBorrower(String borrowerName) throws SQLException {
         int borrower_id = 0;

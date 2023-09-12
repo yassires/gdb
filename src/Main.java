@@ -1,12 +1,16 @@
+import access.AuthorAccess;
+import access.BookAccess;
+import access.BorrowRdAccess;
+import access.BorrowerAccess;
 import classes.Author;
-import classes.Books;
+import classes.Book;
 import classes.BorrowingRecords;
 
 
-import java.awt.*;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -65,6 +69,7 @@ public class Main {
                     updateBook();
                     break;
                 case 8:
+                    statistics();
                     break;
                 case 0:
                     System.out.println("******************************THANK YOU******************************");
@@ -80,7 +85,7 @@ public class Main {
     public static void displayBooks() throws SQLException {
         System.out.println("-----------------------ALL BOOKS------------------------");
             //books
-           access.bookAccess.displayBooks();
+           BookAccess.displayBooks();
         System.out.println("-----------------------------------------------");
         System.out.println("\n");
 
@@ -101,7 +106,7 @@ public class Main {
         String authorName = scanner.nextLine();
         Author author = new Author();
 
-        int authorId = access.authorAccess.fetchAuthorId(authorName);
+        int authorId = AuthorAccess.fetchAuthorId(authorName);
 
         if (authorId != 0) {
             System.out.println("Author ID: " + authorId);
@@ -126,12 +131,19 @@ public class Main {
         System.out.println("Enter Quantity:");
         System.out.println("------------------------------------------------");
         int BookQuantity = Integer.valueOf(scanner.nextInt());
+        while (true) {
+            if (BookQuantity <= 0) {
+                System.out.println("La quantité doit être supérieure à 0. Veuillez entrer une quantité valide :");
+                BookQuantity = scanner.nextInt();
+                scanner.nextLine();
+            } else {
+                break;
+            }
+        }
 
 
-
-
-        Books book = new Books(bookTitle,authorId,bookIsbn,bookCategory,bookReleaseDate,BookQuantity,BookQuantity,0,0);
-        int status = access.bookAccess.addBook(book,authorId);
+        Book book = new Book(bookTitle,authorId,bookIsbn,bookCategory,bookReleaseDate,BookQuantity,BookQuantity,0,0);
+        int status = BookAccess.addBook(book,authorId);
         if(status ==1 )
         {
             System.out.println("Book added successfully");
@@ -144,19 +156,71 @@ public class Main {
     }
 
     public static void updateBook() throws SQLException {
+        int opt;
+        int choice;
+        int book_id = 0;
         System.out.println("------------------------------------------------");
-        System.out.println("Enter Book ID:");
+        System.out.println("Select what do you want to update:");
         System.out.println("------------------------------------------------");
-        int bookId = scanner.nextInt();
+        System.out.println("1. Update title");
+        System.out.println("2. Update author name");
+        System.out.println("3. Update quantity");
+        opt = scanner.nextInt();
+        System.out.println("\n");
         scanner.nextLine();
-        int book_Id = access.bookAccess.fetchBookId(bookId);
+
         System.out.println("------------------------------------------------");
-        System.out.println("Enter New Book Name:");
+        System.out.println("Enter Book Isbn:");
         System.out.println("------------------------------------------------");
-        String bookName = scanner.nextLine();
-        System.out.println("------------------------------------------------");
-        Books book = new Books(bookId);
-        int status =access.bookAccess.updateBook(bookId,bookName);
+        String bookIsbn = scanner.nextLine();
+
+        int status = 0;
+        switch (opt)
+        {
+            case 1:
+                System.out.println("------------------------------------------------");
+                System.out.println("Enter New Book Name:");
+                System.out.println("------------------------------------------------");
+                String bookName = scanner.nextLine();
+                System.out.println("------------------------------------------------");
+
+                Book book = new Book(book_id);
+                book_id = BookAccess.fetchBookIsbn(bookIsbn);
+                status = BookAccess.updateBook(book_id,bookName);
+                break;
+            case 2:
+                System.out.println("------------------------------------------------");
+                System.out.println("Enter New Author Name:");
+                System.out.println("------------------------------------------------");
+                String authorName = scanner.nextLine();
+                System.out.println("------------------------------------------------");
+                int authorId = AuthorAccess.fetchAuthorId(authorName);
+                book_id = BookAccess.fetchBookIsbn(bookIsbn);
+                Book book1 = new Book(book_id);
+                Author author = new Author();
+                author.setId(authorId);
+                book1.setAuthor(author);
+                status = BookAccess.updateBook(book_id, book1,opt);
+                break;
+            case 3:
+                System.out.println("------------------------------------------------");
+                System.out.println("Enter New  Quantity:");
+                System.out.println("------------------------------------------------");
+                int quantity = scanner.nextInt();
+                System.out.println("------------------------------------------------");
+
+                Book books = new Book();
+                books.setQuantity(quantity);
+                book_id = BookAccess.fetchBookIsbn(bookIsbn);
+                status = BookAccess.updateBook(book_id,books,opt);
+                break;
+            default:
+                System.out.println("Invalid Option! Please enter again");
+                break;
+        }
+
+
+
         if(status == 1 )
         {
             System.out.println("Book updated successfully");
@@ -175,7 +239,7 @@ public class Main {
             System.out.println("Enter Book Id:");
             System.out.println("------------------------------------------------");
             int bookId = scanner.nextInt();
-            access.bookAccess.deleteBook(bookId);
+            BookAccess.deleteBook(bookId);
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a valid integer for Book Id.");
             scanner.nextLine(); // Clear the invalid input from the scanner
@@ -190,13 +254,15 @@ public class Main {
         System.out.println("Search for books by title or author: ");
         System.out.println("------------------------------------------------");
         String srch = scanner.nextLine();
-        access.bookAccess.searchBooks(srch);
+        BookAccess.searchBooks(srch);
         System.out.println("Press Enter to return to the main menu...");
         scanner.nextLine();
 
     }
 
     public static void borrowBook() throws SQLException {
+        String borrowerCin = "";
+        String borrowerMail = "";
         System.out.println("--------------------Borrow a Book-----------------------");
         System.out.println("------------------------------------------------");
         System.out.println("Enter Book Isbn: ");
@@ -207,31 +273,29 @@ public class Main {
         System.out.println("Enter Your name:");
         System.out.println("------------------------------------------------");
         String borrowerName = scanner.nextLine();
+        int borrowerId = BorrowerAccess.checkBorrower(borrowerName);
+
+        if (borrowerId !=0){
+            System.out.println("Borrower ID: " + borrowerId);
+        }else {
+
         System.out.println("------------------------------------------------");
         System.out.println("Enter Your CIN:");
         System.out.println("------------------------------------------------");
-        String borrowerCin = scanner.nextLine();
+        borrowerCin = scanner.nextLine();
         System.out.println("------------------------------------------------");
         System.out.println("Enter Your Mail:");
         System.out.println("------------------------------------------------");
-        String borrowerMail = scanner.nextLine();
-        int borrowerId = access.borrowerAccess.checkBorrower(borrowerName);
+        borrowerMail = scanner.nextLine();
+            BorrowerAccess.createBorrower(borrowerName,borrowerCin,borrowerMail);
 
-
-        if (borrowerId != 0){
-            System.out.println("Borrower ID: " + borrowerId);
-        }else {
-            access.borrowerAccess.createBorrower(borrowerName,borrowerCin,borrowerMail);
-
-            borrowerId = access.borrowerAccess.checkBorrower(borrowerName);
-
+            borrowerId = BorrowerAccess.checkBorrower(borrowerName);
         }
-        System.out.println("------------------------------------------------");
-        System.out.println("Enter pick up date:");
-        System.out.println("------------------------------------------------");
-        String dateString = scanner.next();
-        Date borrowDate = Date.valueOf(dateString);
-        scanner.nextLine();
+
+
+
+
+        Date borrowDate = Date.valueOf(LocalDate.now());
         System.out.println("------------------------------------------------");
         System.out.println("Enter Return date:");
         System.out.println("------------------------------------------------");
@@ -240,14 +304,14 @@ public class Main {
 
 
         BorrowingRecords borrowingRecords = new BorrowingRecords(ibn,borrowerId,borrowDate,borrowReturn);
-        String returnResult = access.borrowRdAccess.borrowBook(borrowingRecords,borrowerId);
+        String returnResult = BorrowRdAccess.borrowBook(borrowingRecords,borrowerId);
 
         System.out.println(returnResult);
         System.out.println("\n");
 
     }
 
-    public static void returnBook(){
+    public static void returnBook() throws SQLException {
         System.out.println("------------------------------------------------");
         System.out.print("Enter Your ID: ");
         System.out.println("------------------------------------------------");
@@ -258,8 +322,31 @@ public class Main {
         String isbn = scanner.nextLine();
         System.out.println("------------------------------------------------");
 
-        String returnResult = access.borrowRdAccess.returnBook(borrower_Id,isbn);
+        String returnResult = BorrowRdAccess.returnBook(borrower_Id,isbn);
 
         System.out.println(returnResult);
     }
+
+
+    public static void statistics(){
+        int totalBooksStats = BookAccess.getTotalBooks();
+        int availableBooksStats = BookAccess.getAvailableBooks();
+        int reservedBooksStats = BookAccess.getReservedBooks();
+        int lostBooksStats = BookAccess.getLostBooks();
+        int totalUsersStats = BookAccess.getTotalUsers();
+
+        System.out.println("----------------Library Statistics:----------------");
+        System.out.println("Total Books: " + totalBooksStats);
+        System.out.println("Available Books: " + availableBooksStats);
+        System.out.println("Reserved Books: " + reservedBooksStats);
+        System.out.println("Lost Books: " + lostBooksStats);
+        System.out.println("Total Users: " + totalUsersStats);
+        scanner.nextLine();
+        System.out.println("Press Enter to return to the main menu...");
+        scanner.nextLine();
+
+    }
+
+
+
 }

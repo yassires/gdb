@@ -1,11 +1,10 @@
 package access;
 
 import DB.Db;
-import classes.Author;
 
 import java.sql.*;
 
-public class authorAccess {
+public class AuthorAccess {
 
 
     public static int fetchAuthorId(String authorName) throws SQLException {
@@ -25,7 +24,9 @@ public class authorAccess {
             preparedStatement = connection.prepareStatement("SELECT id FROM authors WHERE LOWER(name) = LOWER(?)");
             preparedStatement.setString(1, authorName);
             resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
             authorId = resultSet.getInt("id");
+            }
         }
         resultSet.close();
         preparedStatement.close();

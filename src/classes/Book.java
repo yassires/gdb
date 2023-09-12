@@ -1,10 +1,8 @@
 package classes;
 
-import classes.Author;
-
 import java.sql.Date;
 
-public class Books {
+public class Book {
     private int id;
     private String title;
     private Author author ;
@@ -16,7 +14,7 @@ public class Books {
     private int borrow;
     private int lost;
 
-    public Books(String title, Author author, String isbn, String category,Date release_date, int quantity, int available,int borrow, int lost){
+    public Book(String title, Author author, String isbn, String category, Date release_date, int quantity, int available, int borrow, int lost){
 
         this.title = title;
         this.author = author;
@@ -28,17 +26,17 @@ public class Books {
         this.borrow = borrow;
         this.lost = lost;
     };
-    public Books(int id) {
+    public Book(int id) {
         this.id = id;
     }
-    public Books(){
+    public Book(){
 
     }
-    public Books(String isbn){
+    public Book(String isbn){
 
     }
 
-    public Books(String bookTitle, int authorId, String bookIsbn, String bookCategory, Date bookReleaseDate, int bookQuantity, int bookQuantity1, int borrow, int lost) {
+    public Book(String bookTitle, int authorId, String bookIsbn, String bookCategory, Date bookReleaseDate, int bookQuantity, int bookQuantity1, int borrow, int lost) {
 
 
         this.title = bookTitle;
@@ -112,8 +110,8 @@ public class Books {
         return lost;
     }
 
-    public int setQuantity() {
-        return quantity;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
     public int setAvailable() {
         return available;

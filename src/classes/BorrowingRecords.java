@@ -10,7 +10,7 @@ public class BorrowingRecords {
     private Date borrowingDate;
     private Date returnborrowingDate;
 
-    private Books book;
+    private Book book;
     private Borrower borrower;
 
     public BorrowingRecords(String isbn, int br_id, Date borrowingDate, Date returnborrowingDate) {

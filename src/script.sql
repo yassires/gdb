@@ -7,7 +7,7 @@ CREATE TABLE author (
                         name VARCHAR(255)
 );
 
-CREATE TABLE books (
+CREATE TABLE book (
                        id INT AUTO_INCREMENT PRIMARY KEY,
                        title VARCHAR(255),
                        author_id INT,
@@ -34,7 +34,7 @@ CREATE TABLE borrowingRecords(
                                  uid varchar(255),
                                  borrowingDate DATE,
                                  returnBorrowingDate DATE,
-                                 FOREIGN KEY (bookIsbn) REFERENCES books(isbn),
+                                 FOREIGN KEY (bookIsbn) REFERENCES book(isbn),
                                  FOREIGN KEY (uid) REFERENCES borrower(uid)
 );
 

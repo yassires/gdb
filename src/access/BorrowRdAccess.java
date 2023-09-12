@@ -1,7 +1,6 @@
 package access;
 
 import DB.Db;
-import classes.Books;
 import classes.BorrowingRecords;
 
 import java.sql.Connection;
@@ -9,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class borrowRdAccess {
+public class BorrowRdAccess {
     public static String borrowBook(BorrowingRecords borrowingRecords, int borrower_id) throws SQLException {
 
             try (Connection connection = Db.getConnection()) {
@@ -33,11 +32,9 @@ public class borrowRdAccess {
                                                             insertRecordStatement.setDate(4, borrowingRecords.getReturnborrowingDate());
                                                             insertRecordStatement.executeUpdate();
 
-                                                            String updateBookSql = "UPDATE books SET available = ?, borrow = ? WHERE id = ?";
+                                                            String updateBookSql = "UPDATE books SET available = available - 1 , borrow = borrow + 1 WHERE id = ?";
                                                             try (PreparedStatement updateBookStatement = connection.prepareStatement(updateBookSql)) {
-                                                                    updateBookStatement.setInt(1, available-1);
-                                                                    updateBookStatement.setInt(2, borrow+1);
-                                                                    updateBookStatement.setInt(3, bookId);
+                                                                    updateBookStatement.setInt(1, bookId);
                                                                     updateBookStatement.executeUpdate();
                                                             }
                                                             String successMessage = "Book with ISBN '" + borrowingRecords.getBookIsbn() + "' borrowed successfully";
@@ -63,7 +60,7 @@ public class borrowRdAccess {
 
         public static String returnBook(int borrowerId, String bookIsbn) {
                 try (Connection connection = Db.getConnection()) {
-                        String selectSql = "SELECT br.id,b.available,b.borrow FROM borrowingRecords br"+ "INNER JOIN books b ON br.bookIsbn = ? AND br.br_id = ?";
+                        String selectSql = "SELECT br.id ,b.available,b.borrow FROM borrowingRecords br INNER JOIN books b ON br.bookIsbn = ? AND br.br_id = ?";
                         try (PreparedStatement selectRecordStatement = connection.prepareStatement(selectSql)) {
                                 selectRecordStatement.setString(1, bookIsbn);
                                 selectRecordStatement.setInt(2, borrowerId);
@@ -71,14 +68,10 @@ public class borrowRdAccess {
 
                                 if (recordResultSet.next()) {
                                         int recordId = recordResultSet.getInt("id");
-                                        int available = recordResultSet.getInt("available");
-                                        int borrow = recordResultSet.getInt("borrow");
-
-                                        String updateBookSql = "UPDATE books SET available = ?, borrow = ? WHERE isbn = ?";
+                                        String updateBookSql = "UPDATE books SET available = available + 1, borrow = borrow - 1 WHERE isbn = ?";
                                         try (PreparedStatement updateBookStatement = connection.prepareStatement(updateBookSql)) {
-                                                updateBookStatement.setInt(1,available+ 1);
-                                                updateBookStatement.setInt(2,borrow-1);
-                                                updateBookStatement.setString(3, bookIsbn);
+
+                                                updateBookStatement.setString(1, bookIsbn);
                                                 updateBookStatement.executeUpdate();
                                         }
 
